@@ -1,30 +1,72 @@
-var express = require("express");
-var app = express();
-var bodyParser = require('body-parser');
-var request = require("request");
-var React = require('react');
+var express     = require("express"),
+    app         = express(),
+    bodyParser  = require('body-parser'),
+    request     = require("request"),
+    mongoose    = require("mongoose");
 
+mongoose.connect("mongodb://localhost/camp_spot");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
+//Database Schema 
+var campgroundSchema = new mongoose.Schema({
+    name: String,
+    image: String,
+    description: String
+});
+var Campground = mongoose.model("Campground", campgroundSchema);
 
+/*Campground.create({
+    name: "Cool",
+    image: "http://www.wildnatureimages.com/images%203/060731-346..jpg"
+}, function(err, campground){
+    if(err){
+        console.log("Theres been an error");
+        console.log(err);
+    } else {
+        console.log("New campground!");
+        console.log(campground);
+    }
+});*/
+///////
+//////Routes
 app.get("/", function(req, res){
     res.render("landing");
 });
 app.get("/campgrounds", function(req, res){
-    var campgrounds = [
-        {name:"Creek Lake", image:"http://dismalscanyon.com/campsites/images/sleeping_water_5177_900px.jpg"},
-        {name:"Yosemite", image:"http://dismalscanyon.com/campsites/images/sleeping_water_5177_900px.jpg"},
-        {name:"Cedar", image:"http://dismalscanyon.com/campsites/images/sleeping_water_5177_900px.jpg"}
-    ];
-    res.render("campgrounds", {campgrounds: campgrounds});
+    Campground.find({}, function(err, allCampgrounds){
+        if(err){
+            console.log("There has been an error!");
+            console.log(err);
+        } else{
+            res.render("index", {campgrounds: allCampgrounds});
+        }
+    });
 });
 app.post("/campgrounds", function(req, res){
-    res.send("Youve hit the post route");
-    //get data from form and send it back to campgrounds page
+    var name = req.body.name;
+    var image = req.body.image;
+    var description = req.body.description;
+    var newGround = {name: name, image: image, description: description};
+    Campground.create(newGround, function(err, newlyCreated){
+        if(err){
+            console.log(err);
+        } else{
+            res.redirect("/campgrounds");
+        }
+    });
 });
 app.get("/campgrounds/new", function(req,res){
     res.render("new");
+});
+app.get("/campgrounds/:id", function(req, res){
+    Campground.findById(req.params.id, function(err, foundCampground){
+        if(err){
+            console.log(err);
+        } else{
+            res.render("show", {campground: foundCampground});
+        }
+    });
 });
 app.get("*", function(req, res){
     var image={
