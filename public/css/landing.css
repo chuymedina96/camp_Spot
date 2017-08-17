@@ -1,0 +1,26 @@
+body{
+    background: linear-gradient(rgba(0, 0, 0, .7), transparent 100%), linear-gradient(0deg, #43BDBD, transparent), url("https://ssl.c.photoshelter.com/img-get/I0000AXrDzDwCM04/s/900/900/campingUnderTheStars.jpg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
+    width: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    padding-bottom: 180px;
+    text-align: center
+}
+h1{
+    font-size: 100px;
+    color: #fff;
+}
+.first-h1{
+    padding-top: 100px;
+}
+a,
+a:hover,
+a:active{
+    text-decoration: none;
+    color: #fff;
+}

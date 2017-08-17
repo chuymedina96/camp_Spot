@@ -2,19 +2,17 @@ var express     = require("express"),
     app         = express(),
     bodyParser  = require('body-parser'),
     request     = require("request"),
-    mongoose    = require("mongoose");
-
+    mongoose    = require("mongoose"),
+    Campground  = require("./models/campground.js"),
+    Comment     = require("./models/comment.js"),
+    seedDB      = require("./seeds.js");
+    
 mongoose.connect("mongodb://localhost/camp_spot");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
-//Database Schema 
-var campgroundSchema = new mongoose.Schema({
-    name: String,
-    image: String,
-    description: String
-});
-var Campground = mongoose.model("Campground", campgroundSchema);
+
+seedDB();
 
 /*Campground.create({
     name: "Cool",
@@ -60,7 +58,7 @@ app.get("/campgrounds/new", function(req,res){
     res.render("new");
 });
 app.get("/campgrounds/:id", function(req, res){
-    Campground.findById(req.params.id, function(err, foundCampground){
+    Campground.findById(req.params.id).populate("comments").exec(function(err, foundCampground){
         if(err){
             console.log(err);
         } else{
@@ -75,7 +73,7 @@ app.get("*", function(req, res){
     res.render("404", {image:image});
 });
 app.listen(process.env.PORT, process.env.IP, function(){
-    console.log("Your server has started!!");
+    console.log("Your server has started yoo!");
 });
 
 /*app.get("/yahoo", function(req, res){
